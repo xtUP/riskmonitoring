@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('维度监控')" />
+<!-- <meta http-equiv="refresh" content="10"> -->
+</head>
+<style>
+table{ 
+text-align:center;
+}
+</style>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header" id="title_float">
+				<div class="col-sm-12" style="text-align:center;font-size:18px;">
+					<select id="selectValue" style="display:block;width:120px;height:30px;float:left;" class="combobox">
+						<option value="10" selected>近10分钟</option>
+						<option value="30">近30分钟</option>
+						<option value="60">近60分钟</option>
+						<option value="一天">近一天</option>
+					</select>
+					<span id="current_time" style="display:block;text-align:center;"></span>
+				</div>
+	</div> 
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<div class="echarts" id="credit_apply_result-pie-chart"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<table id="credit_apply_result_table" style="width: 100%;font-size:18px;">
+							<th style="text-align: center;" colspan="8">授信/通过拒绝原因</th>
+								<!-- <tr>
+									<td>当前周期</td>
+									<td>上一周期</td>
+									<td>当前周期</td>
+									<td>上一周期</td>
+									<td>差值</td>
+									<td>当前周期</td>
+									<td>上一周期</td>
+									<td>差值</td>
+								</tr> -->
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						
+						<div class="echarts" id="release_result-pie-chart"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<table id="release_result_table" style="width: 100%;font-size:18px;">
+							<th style="text-align: center;" colspan="8">借据放款/通过拒绝原因</th>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>	
+		<!--结尾 -->
+		<input type="hidden" id="initSv" th:value="${selectValue}"/>
+		</div>			
+		<th:block th:include="include :: footer" />
+		<th:block th:include="include :: echarts-js" />
+		<th:block th:include="include :: sparkline-js" />
+		<script type="text/javascript">
+			var prefix = ctx + "echarts/dataecharts";
+			$(function() {
+				startFun();
+			});
+			function startFun(){
+				var selectV=$("#initSv").val();
+				if(selectV.length == 0){
+					selectV='10';
+				}
+				$("#selectValue").val(selectV);
+				omg();
+			};
+			/* var selectT=60000;
+			var isLoaded = false; */
+			function omg(){
+				var myDate = new Date;
+			    var year = myDate.getFullYear(); //获取当前年
+			    var mon = myDate.getMonth() + 1; //获取当前月
+			    var date = myDate.getDate(); //获取当前日
+			    var h = myDate.getHours();//获取当前小时数(0-23)
+			    var m = myDate.getMinutes();//获取当前分钟数(0-59)
+			    var s = myDate.getSeconds();//获取当前秒
+			    $("#current_time").html("数据截止时间："+year+"年"+mon+"月"+date+"日"+h+"时"+m+"分"+s+"秒"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				//授信失败原因饼状图
+				var selectValue = document.getElementById("selectValue").value;
+				var selectDesc;
+				if(selectValue.length == 0){
+					selectValue='10';
+				}
+				if(selectValue=='一天'){
+					selectDesc='近一天';
+				}else{
+					selectDesc='近'+selectValue+'分钟';
+				}
+				var release_result_pieChart = echarts.init(document
+						.getElementById("release_result-pie-chart"));
+				var release_result_pieoption = {
+					title : {
+						text : '借据放款失败原因',
+						subtext : '来自kudu',
+						x : 'center'
+					},
+					tooltip : {
+						trigger : 'item',
+						formatter : "{a} <br/>{b} : {c} ({d}%)",
+						textStyle : {
+				            fontSize: 22
+				        }
+					},
+					/* legend : {
+						orient : 'vertical',
+						x : 'left',
+						height :450,
+						textStyle : {
+				            fontSize: 22
+				        },
+						data : []
+					}, */
+					calculable : true,
+					series : [ {
+						name : '访问来源',
+						type : 'pie',
+						radius : '55%',
+						center : [ '50%', '60%' ],
+						label : {
+				            normal: {
+				                show: true,
+				                textStyle: {
+				                    fontSize: 22
+				             	   }
+				         	   }	
+				            },
+						data : []
+					} ]
+				};
+				//借据放款失败原因
+				var selectValue = document.getElementById("selectValue").value;
+				var credit_apply_result_pieChart = echarts.init(document
+						.getElementById("credit_apply_result-pie-chart"));
+				var credit_apply_result_pieoption = {
+					title : {
+						text : '授信-外部拒绝原因',
+						subtext : '来自kudu',
+						x : 'center'
+					},
+					tooltip : {
+						trigger : 'item',
+						formatter : "{a} <br/>{b} : {c} ({d}%)",
+						textStyle : {
+				            fontSize: 22
+				        }
+					},
+					/* legend : {
+						orient : 'vertical',
+						x : 'left',
+						height :450,
+						textStyle : {
+				            fontSize: 22
+				        },
+						data : []
+					}, */
+					calculable : true,
+					series : [ {
+						name : '访问来源',
+						type : 'pie',
+						radius : '55%',
+						center : [ '50%', '60%' ],
+						label : {
+					            normal: {
+					                show: true,
+					                textStyle: {
+					                    fontSize: 22
+					             	   }
+					         	   }	
+					            },
+						data : []
+					} ]
+				};
+				var credit_apply_result_reason = [];
+				var credit_apply_result_value = [];
+				var release_result_reason = [];
+				var release_result_value = [];
+				$("#credit_apply_result_table").empty();
+				$("#credit_apply_result_table").addClass("table table-hover");
+				$("#credit_apply_result_table").append('<th style="text-align: center;" colspan="8">授信/通过拒绝原因('+selectDesc+')</th>');
+				$("#credit_apply_result_table").append('<tr><td>当前周期原因</td><td>上一周期原因</td><td>当前周期人数</td><td>上一周期人数</td><td>人数差值</td><td>当前周期占比</td><td>上一周期占比</td><td>占比差值</td></tr>');
+				$("#release_result_table").empty();
+				$("#release_result_table").addClass("table table-hover");
+				$("#release_result_table").append('<th style="text-align: center;" colspan="8">借据放款/通过拒绝原因('+selectDesc+')</th>');
+				$("#release_result_table").append('<tr><td>当前周期原因</td><td>上一周期原因</td><td>当前周期人数</td><td>上一周期人数</td><td>人数差值</td><td>当前周期占比</td><td>上一周期占比</td><td>占比差值</td></tr>');
+				$.ajax({
+					cache : false,
+					type : "POST",
+					url : prefix + "/wd_echarts"+"?selectValue="+selectValue,
+					data : {},
+					dataType : 'json',
+					async : false,
+					error : function(request) {
+						/* $.modal.alertError("系统错误"); */
+					},
+					success : function(data) {
+						//		$.modal.alertSuccess("请求成功");
+						for (var i = 0; i < data.length; i++) {
+						//借据放款失败原因饼状图
+							if(data[i].name=='release_result_present'){
+								var reason=data[i].reason;
+								if(reason.length>16){
+									reason=reason.substring(0,15)+'···';
+								}
+								release_result_reason.push(data[i].reason);
+								release_result_value.push({
+									value : data[i].value,
+									name :reason
+								});
+							}
+						//借据放款表单
+							if(data[i].name=='release_result_present'||data[i].name=='release_result_later'){
+								//table追加行和列
+								$("#release_result_table").append('<tr><td width="20%">'
+										+data[i].reason+'</td><td width="20%">'
+										+data[i].later_reason+'</td><td width="10%">'
+										+data[i].value+'</td><td width="10%">'
+										+data[i].later_value+'</td><td width="10%">'
+										+data[i].cal_value+'</td><td width="10%">'
+										+data[i].present_rate+'</td><td width="10%">'
+										+data[i].later_rate+'</td><td width="10%">'
+										+data[i].rate+'</td></tr>');
+							}
+							//授信失败原因饼状图
+							if(data[i].name=='credit_apply_result_present'){
+								credit_apply_result_reason.push(data[i].reason);
+								var reason=data[i].reason;
+								if(reason.length>16){
+									reason=reason.substring(0,15)+'···';
+								}
+								credit_apply_result_value.push({
+									value : data[i].value,
+									name : reason
+								});
+							}
+							if(data[i].name=='credit_apply_result_present'||data[i].name=='credit_apply_result_later'){
+								//table追加行和列	
+								$("#credit_apply_result_table").append('<tr><td width="20%">'
+										+data[i].reason+'</td><td width="20%">'
+										+data[i].later_reason+'</td><td width="10%">'
+										+data[i].value+'</td><td width="10%">'
+										+data[i].later_value+'</td><td width="10%">'
+										+data[i].cal_value+'</td><td width="10%">'
+										+data[i].present_rate+'</td><td width="10%">'
+										+data[i].later_rate+'</td><td width="10%">'
+										+data[i].rate+'</td></tr>');
+							}
+						}
+						//授信失败原因饼状图
+						release_result_pieChart.setOption(release_result_pieoption);
+						release_result_pieChart.setOption({ //加载数据图表
+							/* legend : [ {
+								data : release_result_reason
+							} ], */
+							series : [ {
+								// 根据名字对应到相应的系列
+								data : release_result_value
+							} ]
+						});
+						$(window).resize(release_result_pieChart.resize);
+						//借据放款失败原因饼状图
+						credit_apply_result_pieChart.setOption(credit_apply_result_pieoption);
+						credit_apply_result_pieChart.setOption({ //加载数据图表
+							/* legend : [ {
+								data : credit_apply_result_reason
+							} ], */
+							series : [ {
+								// 根据名字对应到相应的系列
+								data : credit_apply_result_value
+							} ]
+						});
+						$(window).resize(credit_apply_result_pieChart.resize);
+					//success结尾
+					}
+					 /* ,
+					complete: function() {
+			            isLoaded = true;
+			        }  */
+				//ajax结尾
+				});
+			}
+			$(function() {
+				$("#selectValue").change(function(){
+					omg();
+			});
+			});
+			/* startFun();
+			setInterval(function() {
+				 if(isLoaded) startFun();
+				}, selectT); */ 
+			
+		</script>
+</body>
+</html>

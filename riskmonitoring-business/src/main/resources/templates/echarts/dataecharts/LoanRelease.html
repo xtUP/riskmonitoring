@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('放款指标')" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- <meta http-equiv="refresh" content="10"> -->
+</head>
+<style type="text/css">
+@media (min-width: 1200px) {
+.col-zdlg-2-5{
+float: left;
+width:20%;
+}
+}
+.xt-percent{
+margin-left: 60px;
+font-style:normal;
+display:block;
+float: left;
+}
+.xt-r{
+float: right;
+}
+small{
+    font-size: 22px;
+}
+</style>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header" id="title_float">
+				<div class="col-sm-12" style="text-align:center;font-size:18px;">
+					<select id="selectValue" style="display:block;width:120px;height:30px;float:left;" class="combobox">
+						<option value="10" selected>近10分钟</option>
+						<option value="30">近30分钟</option>
+						<option value="60">近60分钟</option>
+						<option value="一天">近一天</option>
+					</select>
+					<span id="current_time" style="display:block;text-align:center;"></span>
+				</div>
+	</div> 
+	<div class="wrapper wrapper-content animated fadeInRight">
+<!--借据放款结果-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="release_result_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<div id="release_result_width_1"></div>
+						<h1 class="no-margins" id="release_result_request_Num" style="font-weight:700;font-size:52px;"></h1>
+						<div id="release_result_width_2"></div>
+						<div id="Contrast_people_release_result" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_release_result" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="release_result_pass_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">通过人数</h4>
+						<h1 class="no-margins" id="release_result_pass_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="release_result_pass_desc"></h4>
+						<h2 id="release_result_pass_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_release_result_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_release_result_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="release_result_reject_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">拒绝人数</h4>
+						<h1 class="no-margins" id="release_result_reject_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="release_result_reject_desc"></h4>
+						<h2 id="release_result_reject_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_release_result_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_release_result_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">借据放款结果</h4>
+						<h4 id="release_result_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="release_result_request_data_show" style="font-weight:700;"></div>
+						<div id="release_result_request_with"></div>
+						<div id="release_result_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">借据放款结果</h4>
+						<h4 id="release_result_request_pass_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="release_result_request_pass_data_show" style="font-weight:700;"></div>
+						<div id="release_result_request_pass_with"></div>
+						<div id="release_result_request_pass_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>		
+		</div>									
+	<!--结尾 -->
+	<input type="hidden" id="initSv" th:value="${selectValue}"/>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: echarts-js" />
+	<th:block th:include="include :: sparkline-js" />
+	<script type="text/javascript">
+			var prefix = ctx + "echarts/node";
+			$(function() {
+				var selectV=$("#initSv").val();
+				if(selectV==''||selectV==null){
+					selectV='10';
+				}
+				$("#selectValue").val(selectV);
+				omg();
+			});
+			function omg(){
+				var myDate = new Date;
+			    var year = myDate.getFullYear(); //获取当前年
+			    var mon = myDate.getMonth() + 1; //获取当前月
+			    var date = myDate.getDate(); //获取当前日
+			    var h = myDate.getHours();//获取当前小时数(0-23)
+			    var m = myDate.getMinutes();//获取当前分钟数(0-59)
+			    var s = myDate.getSeconds();//获取当前秒
+			    $("#current_time").html("数据截止时间："+year+"年"+mon+"月"+date+"日"+h+"时"+m+"分"+s+"秒"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			    //时间间隔
+				var selectValue = document.getElementById("selectValue").value;
+				var name;
+				$.ajax({
+					cache : false,
+					type : "POST",
+					url : prefix + "/node"+"?selectValue="+selectValue,
+					data : {},
+					dataType : 'json',
+					async : false,
+					error : function(request) {
+						$.modal.alertError("系统错误");
+					},
+					success : function(data) {
+						//window.alert(data);
+						for (var i = 0; i < data.length; i++) {
+							name=data[i].monitor_node_event; //挨个取出节点
+							//请求人数
+							if(name=='release_result'){
+								$("#release_result_request_time").empty();
+								if(selectValue=='一天'){
+									$("#release_result_request_time").append('借据放款结果-近'+selectValue);
+								}else{
+									$("#release_result_request_time").append('借据放款结果-近'+selectValue+'分钟');
+								}
+								$("#release_result_width_1").empty();
+								$("#release_result_width_2").empty();
+								$("#release_result_request_Num").empty();
+								$("#release_result_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_release_result").empty();
+								$("#Contrast_people_release_result").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_release_result").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_release_result").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_release_result").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_release_result").append(data[i].yesterday_request_person);
+									$("#Contrast_people_release_result").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_release_result").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_release_result").append(data[i].yesterday_request_person);
+										$("#Contrast_people_release_result").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_release_result").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_release_result").append(data[i].yesterday_request_person);
+										$("#Contrast_people_release_result").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_release_result").empty();
+								 $("#QOQ_people_release_result").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_release_result").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_release_result").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_release_result").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_release_result").append(data[i].late_request_person);
+										$("#QOQ_people_release_result").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_release_result").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_release_result").append(data[i].late_request_person);
+											$("#QOQ_people_release_result").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_release_result").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_release_result").append(data[i].late_request_person);
+											$("#QOQ_people_release_result").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='release_result'){
+								$("#release_result_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#release_result_pass_time").append('借据放款结果-近'+selectValue);
+								}else{
+									$("#release_result_pass_time").append('借据放款结果-近'+selectValue+'分钟');
+								}
+								$("#release_result_pass_queryNum").empty();
+								$("#release_result_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#release_result_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#release_result_pass_desc").append('近'+selectValue+'借据放款结果通过率');
+								}else{
+									$("#release_result_pass_desc").append('近'+selectValue+'分钟借据放款结果通过率');
+								}
+								$("#release_result_pass_rate").empty();
+								$("#release_result_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_release_result_pass_query").empty();
+								$("#Contrast_release_result_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_release_result_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_release_result_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_release_result_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_release_result_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_release_result_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_release_result_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_release_result_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_release_result_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_release_result_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_release_result_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_release_result_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_release_result_pass_query").empty();
+								$("#QOQ_release_result_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_release_result_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_release_result_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_release_result_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_release_result_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_release_result_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_release_result_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_release_result_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_release_result_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_release_result_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_release_result_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_release_result_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='release_result'){
+								$("#release_result_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#release_result_reject_time").append('借据放款结果-近'+selectValue);
+								}else{
+									$("#release_result_reject_time").append('借据放款结果-近'+selectValue+'分钟');
+								}
+								$("#release_result_reject_queryNum").empty();
+								$("#release_result_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#release_result_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#release_result_reject_desc").append('近'+selectValue+'借据放款结果拒绝率');
+								}else{
+									$("#release_result_reject_desc").append('近'+selectValue+'分钟借据放款结果拒绝率');
+								}
+								$("#release_result_reject_rate").empty();
+								$("#release_result_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_release_result_reject_query").empty();
+								$("#Contrast_release_result_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_release_result_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_release_result_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_release_result_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_release_result_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_release_result_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_release_result_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_release_result_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_release_result_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_release_result_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_release_result_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_release_result_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+										}
+									}
+								$("#QOQ_release_result_reject_query").empty();
+								$("#QOQ_release_result_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_release_result_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_release_result_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_release_result_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_release_result_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_release_result_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_release_result_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_release_result_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_release_result_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_release_result_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_release_result_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_release_result_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='release_result'){
+								$("#release_result_request_data").empty();
+								$("#release_result_request_data").append('最近借据放款结果时间');
+								$("#release_result_request_data_show").empty();
+								$("#release_result_request_nearTime").empty();
+								$("#release_result_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#release_result_request_data_show").addClass("font-bold text-danger");
+									$("#release_result_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#release_result_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#release_result_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#release_result_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#release_result_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='release_result'){
+								$("#release_result_request_pass_data").empty();
+								$("#release_result_request_pass_data").append('最近借据放款结果通过时间');
+								$("#release_result_request_pass_data_show").empty();
+								$("#release_result_request_pass_nearTime").empty();
+								$("#release_result_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#release_result_request_pass_data_show").addClass("font-bold text-danger");
+									$("#release_result_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#release_result_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#release_result_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#release_result_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#release_result_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+						}
+					}
+				});
+			};
+			$(function() {
+				$("#selectValue").change(function(){
+					omg();
+			});
+			});
+		</script>
+</body>
+</html>

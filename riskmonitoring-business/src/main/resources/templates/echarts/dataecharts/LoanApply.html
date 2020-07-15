@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('提款指标')" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- <meta http-equiv="refresh" content="10"> -->
+</head>
+<style type="text/css">
+@media (min-width: 1200px) {
+.col-zdlg-2-5{
+float: left;
+width:20%;
+}
+}
+.xt-percent{
+margin-left: 60px;
+font-style:normal;
+display:block;
+float: left;
+}
+.xt-r{
+float: right;
+}
+small{
+    font-size: 22px;
+}
+</style>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header" id="title_float">
+				<div class="col-sm-12" style="text-align:center;font-size:18px;">
+					<select id="selectValue" style="display:block;width:120px;height:30px;float:left;" class="combobox">
+						<option value="10" selected>近10分钟</option>
+						<option value="30">近30分钟</option>
+						<option value="60">近60分钟</option>
+						<option value="一天">近一天</option>
+					</select>
+					<span id="current_time" style="display:block;text-align:center;"></span>
+				</div>
+	</div>
+	<div class="wrapper wrapper-content animated fadeInRight">
+<!--提款申请-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_apply_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<div id="loan_apply_width_1"></div>
+						<h1 class="no-margins" id="loan_apply_request_Num" style="font-weight:700;font-size:52px;"></h1>
+						<div id="loan_apply_width_2"></div>
+						<div id="Contrast_people_loan_apply" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_loan_apply" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="col-xs-12 col-sm-12 col-md-4 col-zdlg-2-5" hidden="hidden">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_apply_pass_time"></h4>
+						<h4>提款申请通过人数</h4>
+						<h1 class="no-margins" id="loan_apply_pass_queryNum"></h1>
+						<h4 id="loan_apply_pass_desc"></h4>
+						<h4 id="loan_apply_pass_rate"></h4>
+						<div id="Contrast_loan_apply_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_apply_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-4 col-zdlg-2-5" hidden="hidden">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_apply_reject_time"></h4>
+						<h4>提款申请拒绝人数</h4>
+						<h1 class="no-margins" id="loan_apply_reject_queryNum"></h1>
+						<h4 id="loan_apply_reject_desc"></h4>
+						<h4 id="loan_apply_reject_rate"></h4>
+						<div id="Contrast_loan_apply_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_apply_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div> -->
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">提款申请</h4>
+						<h4 id="loan_apply_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="loan_apply_request_data_show" style="font-weight:700;"></div>
+						<div id="loan_apply_request_with"></div>
+						<div id="loan_apply_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="col-xs-12 col-sm-12 col-md-4 col-zdlg-2-5" hidden="hidden">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4>提款申请</h4>
+						<h4 id="loan_apply_request_pass_data"></h4>
+						<h4>&nbsp;</h4>
+						<div class="no-margins" id="loan_apply_request_pass_data_show"></div>
+						<div id="loan_apply_request_pass_with"></div>
+						<div class="stat-percent font-bold text-navy" id="loan_apply_request_pass_nearTime">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>	 -->	
+		</div>
+<!--刷脸-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_fase_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<!-- <h4> &nbsp;</h4> -->
+						<div id="loan_fase_width_1"></div>
+						<h1 class="no-margins" id="loan_fase_request_Num" style="font-weight:700;"></h1>
+						<!-- <h4>&nbsp;</h4> -->
+						<div id="loan_fase_width_2"></div>
+						<div id="Contrast_people_loan_fase" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_loan_fase" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_fase_pass_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">通过人数</h4>
+						<h1 class="no-margins" id="loan_fase_pass_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="loan_fase_pass_desc"></h4>
+						<h2 id="loan_fase_pass_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_loan_fase_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_fase_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_fase_reject_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">拒绝人数</h4>
+						<h1 class="no-margins" id="loan_fase_reject_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="loan_fase_reject_desc"></h4>
+						<h2 id="loan_fase_reject_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_loan_fase_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_fase_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">刷脸</h4>
+						<h4 id="loan_fase_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="loan_fase_request_data_show" style="font-weight:700;"></div>
+						<div id="loan_fase_request_with"></div>
+						<div id="loan_fase_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">刷脸</h4>
+						<h4 id="loan_fase_request_pass_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="loan_fase_request_pass_data_show" style="font-weight:700;"></div>
+						<div id="loan_fase_request_pass_with"></div>
+						<div id="loan_fase_request_pass_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>		
+		</div>	
+<!--反欺诈提款-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="anti_fraud_withdraw_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<!-- <h4> &nbsp;</h4> -->
+						<div id="anti_fraud_withdraw_width_1"></div>
+						<h1 class="no-margins" id="anti_fraud_withdraw_request_Num" style="font-weight:700;font-size:52px;"></h1>
+						<!-- <h4>&nbsp;</h4> -->
+						<div id="anti_fraud_withdraw_width_2"></div>
+						<div id="Contrast_people_anti_fraud_withdraw" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_anti_fraud_withdraw" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="anti_fraud_withdraw_pass_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">通过人数</h4>
+						<h1 class="no-margins" id="anti_fraud_withdraw_pass_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="anti_fraud_withdraw_pass_desc"></h4>
+						<h2 id="anti_fraud_withdraw_pass_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_anti_fraud_withdraw_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_anti_fraud_withdraw_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="anti_fraud_withdraw_reject_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">拒绝人数</h4>
+						<h1 class="no-margins" id="anti_fraud_withdraw_reject_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="anti_fraud_withdraw_reject_desc"></h4>
+						<h2 id="anti_fraud_withdraw_reject_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_anti_fraud_withdraw_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_anti_fraud_withdraw_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">反欺诈提款</h4>
+						<h4 id="anti_fraud_withdraw_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="anti_fraud_withdraw_request_data_show" style="font-weight:700;"></div>
+						<div id="anti_fraud_withdraw_request_with"></div>
+						<div id="anti_fraud_withdraw_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">反欺诈提款</h4>
+						<h4 id="anti_fraud_withdraw_request_pass_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="anti_fraud_withdraw_request_pass_data_show" style="font-weight:700;"></div>
+						<div id="anti_fraud_withdraw_request_pass_with"></div>
+						<div id="anti_fraud_withdraw_request_pass_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>		
+		</div>	
+<!--提款申请结果-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_apply_result_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<div id="loan_apply_result_width_1"></div>
+						<h1 class="no-margins" id="loan_apply_result_request_Num" style="font-weight:700;font-size:52px;"></h1>
+						<div id="loan_apply_result_width_2"></div>
+						<div id="Contrast_people_loan_apply_result" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_loan_apply_result" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_apply_result_pass_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">通过人数</h4>
+						<h1 class="no-margins" id="loan_apply_result_pass_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="loan_apply_result_pass_desc"></h4>
+						<h2 id="loan_apply_result_pass_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_loan_apply_result_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_apply_result_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_apply_result_reject_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">拒绝人数</h4>
+						<h1 class="no-margins" id="loan_apply_result_reject_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="loan_apply_result_reject_desc"></h4>
+						<h2 id="loan_apply_result_reject_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_loan_apply_result_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_apply_result_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">提款申请结果</h4>
+						<h4 id="loan_apply_result_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="loan_apply_result_request_data_show" style="font-weight:700;"></div>
+						<div id="loan_apply_result_request_with"></div>
+						<div id="loan_apply_result_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">提款申请结果</h4>
+						<h4 id="loan_apply_result_request_pass_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="loan_apply_result_request_pass_data_show" style="font-weight:700;"></div>
+						<div id="loan_apply_result_request_pass_with"></div>
+						<div id="loan_apply_result_request_pass_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>		
+		</div>	
+<!--反欺诈终审-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="anti_fraud_finalCheck_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<div id="anti_fraud_finalCheck_width_1"></div>
+						<h1 class="no-margins" id="anti_fraud_finalCheck_request_Num" style="font-weight:700;font-size:52px;"></h1>
+						<div id="anti_fraud_finalCheck_width_2"></div>
+						<div id="Contrast_people_anti_fraud_finalCheck" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_anti_fraud_finalCheck" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="anti_fraud_finalCheck_pass_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">通过人数</h4>
+						<h1 class="no-margins" id="anti_fraud_finalCheck_pass_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="anti_fraud_finalCheck_pass_desc"></h4>
+						<h2 id="anti_fraud_finalCheck_pass_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_anti_fraud_finalCheck_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_anti_fraud_finalCheck_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="anti_fraud_finalCheck_reject_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">拒绝人数</h4>
+						<h1 class="no-margins" id="anti_fraud_finalCheck_reject_queryNum" style="font-weight:700;font-size:52px;"></h1>
+						<h4 id="anti_fraud_finalCheck_reject_desc"></h4>
+						<h2 id="anti_fraud_finalCheck_reject_rate" style="font-weight:700;"></h2>
+						<div id="Contrast_anti_fraud_finalCheck_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_anti_fraud_finalCheck_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">反欺诈终审</h4>
+						<h4 id="anti_fraud_finalCheck_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="anti_fraud_finalCheck_request_data_show" style="font-weight:700;"></div>
+						<div id="anti_fraud_finalCheck_request_with"></div>
+						<div id="anti_fraud_finalCheck_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">反欺诈终审</h4>
+						<h4 id="anti_fraud_finalCheck_request_pass_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="anti_fraud_finalCheck_request_pass_data_show" style="font-weight:700;"></div>
+						<div id="anti_fraud_finalCheck_request_pass_with"></div>
+						<div id="anti_fraud_finalCheck_request_pass_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>		
+		</div>	
+<!--提款确认-->
+	<div class="row">
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_withdraw_request_time" style="font-weight:700;"></h4>
+						<h4 style="font-weight:700;">请求人数</h4>
+						<div id="loan_withdraw_width_1"></div>
+						<h1 class="no-margins" id="loan_withdraw_request_Num" style="font-weight:700;font-size:52px;"></h1>
+						<div id="loan_withdraw_width_2"></div>
+						<div id="Contrast_people_loan_withdraw" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_people_loan_withdraw" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="col-xs-12 col-sm-12 col-md-4 col-zdlg-2-5" hidden="hidden">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_withdraw_pass_time"></h4>
+						<h4>提款确认通过人数</h4>
+						<h1 class="no-margins" id="loan_withdraw_pass_queryNum"></h1>
+						<h4 id="loan_withdraw_pass_desc"></h4>
+						<h4 id="loan_withdraw_pass_rate"></h4>
+						<div id="Contrast_loan_withdraw_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_withdraw_pass_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-4 col-zdlg-2-5" hidden="hidden">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 id="loan_withdraw_reject_time"></h4>
+						<h4>提款确认拒绝人数</h4>
+						<h1 class="no-margins" id="loan_withdraw_reject_queryNum"></h1>
+						<h4 id="loan_withdraw_reject_desc"></h4>
+						<h4 id="loan_withdraw_reject_rate"></h4>
+						<div id="Contrast_loan_withdraw_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>同比</small>
+						<div></div>
+						<div id="QOQ_loan_withdraw_reject_query" style="width:55%;font-weight:700;font-size:22px">
+						
+						</div>
+						<small>环比</small>
+					</div>
+				</div>
+			</div> -->
+			<div class="col-sm-6">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4 style="font-weight:700;">提款确认</h4>
+						<h4 id="loan_withdraw_request_data" style="font-weight:700;"></h4>
+						<div class="no-margins" id="loan_withdraw_request_data_show" style="font-weight:700;"></div>
+						<div id="loan_withdraw_request_with"></div>
+						<div id="loan_withdraw_request_nearTime" style="font-weight:700;font-size:22px;">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="col-xs-12 col-sm-12 col-md-4 col-zdlg-2-5" hidden="hidden">
+				<div class="ibox">
+					<div class="ibox-content">
+						<h4>提款确认</h4>
+						<h4 id="loan_withdraw_request_pass_data"></h4>
+						<div class="no-margins" id="loan_withdraw_request_pass_data_show"></div>
+						<div id="loan_withdraw_request_pass_with"></div>
+						<div class="stat-percent font-bold text-navy" id="loan_withdraw_request_pass_nearTime">
+						</div>
+						<small>距离当前间隔</small>
+					</div>
+				</div>
+			</div>		 -->
+		</div>	
+	<!--结尾 -->
+	<input type="hidden" id="initSv" th:value="${selectValue}"/>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: echarts-js" />
+	<th:block th:include="include :: sparkline-js" />
+	<script type="text/javascript">
+			var prefix = ctx + "echarts/node";
+			$(function() {
+				var selectV=$("#initSv").val();
+				if(selectV==''||selectV==null){
+					selectV='10';
+				}
+				$("#selectValue").val(selectV);
+				omg();
+			});
+			function omg(){
+				var myDate = new Date;
+			    var year = myDate.getFullYear(); //获取当前年
+			    var mon = myDate.getMonth() + 1; //获取当前月
+			    var date = myDate.getDate(); //获取当前日
+			    var h = myDate.getHours();//获取当前小时数(0-23)
+			    var m = myDate.getMinutes();//获取当前分钟数(0-59)
+			    var s = myDate.getSeconds();//获取当前秒
+			    $("#current_time").html("数据截止时间："+year+"年"+mon+"月"+date+"日"+h+"时"+m+"分"+s+"秒"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			    //时间间隔
+				var selectValue = document.getElementById("selectValue").value;
+				var name;
+				$.ajax({
+					cache : false,
+					type : "POST",
+					url : prefix + "/node"+"?selectValue="+selectValue,
+					data : {},
+					dataType : 'json',
+					async : false,
+					error : function(request) {
+						$.modal.alertError("系统错误");
+					},
+					success : function(data) {
+						//window.alert(data);
+						for (var i = 0; i < data.length; i++) {
+							name=data[i].monitor_node_event; //挨个取出节点
+							
+							
+							
+							//请求人数
+							if(name=='credit_apply_result'){
+								$("#credit_apply_result_request_time").empty();
+								if(selectValue=='一天'){
+									$("#credit_apply_result_request_time").append('授信申请结果-近'+selectValue);
+								}else{
+									$("#credit_apply_result_request_time").append('授信申请结果-近'+selectValue+'分钟');
+								}
+								$("#credit_apply_result_width_1").empty();
+								$("#credit_apply_result_width_2").empty();
+								$("#credit_apply_result_request_Num").empty();
+								$("#credit_apply_result_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_credit_apply_result").empty();
+								$("#Contrast_people_credit_apply_result").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_credit_apply_result").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_credit_apply_result").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_credit_apply_result").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_credit_apply_result").append(data[i].yesterday_request_person);
+									$("#Contrast_people_credit_apply_result").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_credit_apply_result").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_credit_apply_result").append(data[i].yesterday_request_person);
+										$("#Contrast_people_credit_apply_result").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_credit_apply_result").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_credit_apply_result").append(data[i].yesterday_request_person);
+										$("#Contrast_people_credit_apply_result").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_credit_apply_result").empty();
+								 $("#QOQ_people_credit_apply_result").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_credit_apply_result").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_credit_apply_result").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_credit_apply_result").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_credit_apply_result").append(data[i].late_request_person);
+										$("#QOQ_people_credit_apply_result").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_credit_apply_result").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_credit_apply_result").append(data[i].late_request_person);
+											$("#QOQ_people_credit_apply_result").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_credit_apply_result").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_credit_apply_result").append(data[i].late_request_person);
+											$("#QOQ_people_credit_apply_result").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='credit_apply_result'){
+								$("#credit_apply_result_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#credit_apply_result_pass_time").append('授信申请结果-近'+selectValue);
+								}else{
+									$("#credit_apply_result_pass_time").append('授信申请结果-近'+selectValue+'分钟');
+								}
+								$("#credit_apply_result_pass_queryNum").empty();
+								$("#credit_apply_result_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#credit_apply_result_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#credit_apply_result_pass_desc").append('近'+selectValue+'授信申请结果通过率');
+								}else{
+									$("#credit_apply_result_pass_desc").append('近'+selectValue+'分钟授信申请结果通过率');
+								}
+								$("#credit_apply_result_pass_rate").empty();
+								$("#credit_apply_result_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_credit_apply_result_pass_query").empty();
+								$("#Contrast_credit_apply_result_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_credit_apply_result_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_credit_apply_result_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_credit_apply_result_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_credit_apply_result_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_credit_apply_result_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_credit_apply_result_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_credit_apply_result_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_credit_apply_result_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_credit_apply_result_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_credit_apply_result_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_credit_apply_result_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_credit_apply_result_pass_query").empty();
+								$("#QOQ_credit_apply_result_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_credit_apply_result_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_credit_apply_result_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_credit_apply_result_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_credit_apply_result_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_credit_apply_result_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_credit_apply_result_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_credit_apply_result_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_credit_apply_result_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_credit_apply_result_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_credit_apply_result_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_credit_apply_result_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='credit_apply_result'){
+								$("#credit_apply_result_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#credit_apply_result_reject_time").append('授信申请结果-近'+selectValue);
+								}else{
+									$("#credit_apply_result_reject_time").append('授信申请结果-近'+selectValue+'分钟');
+								}
+								$("#credit_apply_result_reject_queryNum").empty();
+								$("#credit_apply_result_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#credit_apply_result_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#credit_apply_result_reject_desc").append('近'+selectValue+'授信申请结果拒绝率');
+								}else{
+									$("#credit_apply_result_reject_desc").append('近'+selectValue+'分钟授信申请结果拒绝率');
+								}
+								$("#credit_apply_result_reject_rate").empty();
+								$("#credit_apply_result_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_credit_apply_result_reject_query").empty();
+								$("#Contrast_credit_apply_result_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_credit_apply_result_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_credit_apply_result_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_credit_apply_result_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_credit_apply_result_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_credit_apply_result_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){																																																																																				
+										$("#Contrast_credit_apply_result_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_credit_apply_result_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_credit_apply_result_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_credit_apply_result_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_credit_apply_result_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_credit_apply_result_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}
+								}
+								$("#QOQ_credit_apply_result_reject_query").empty();
+								$("#QOQ_credit_apply_result_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_credit_apply_result_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_credit_apply_result_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_credit_apply_result_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_credit_apply_result_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_credit_apply_result_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_credit_apply_result_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_credit_apply_result_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_credit_apply_result_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_credit_apply_result_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_credit_apply_result_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_credit_apply_result_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='credit_apply_result'){
+								$("#credit_apply_result_request_data").empty();
+								$("#credit_apply_result_request_data").append('最近授信申请结果时间');
+								$("#credit_apply_result_request_data_show").empty();
+								$("#credit_apply_result_request_nearTime").empty();
+								$("#credit_apply_result_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#credit_apply_result_request_data_show").addClass("font-bold text-danger");
+									$("#credit_apply_result_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#credit_apply_result_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#credit_apply_result_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#credit_apply_result_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#credit_apply_result_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='credit_apply_result'){
+								$("#credit_apply_result_request_pass_data").empty();
+								$("#credit_apply_result_request_pass_data").append('最近授信申请结果通过时间');
+								$("#credit_apply_result_request_pass_data_show").empty();
+								$("#credit_apply_result_request_pass_nearTime").empty();
+								$("#credit_apply_result_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#credit_apply_result_request_pass_data_show").addClass("font-bold text-danger");
+									$("#credit_apply_result_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#credit_apply_result_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#credit_apply_result_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#credit_apply_result_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#credit_apply_result_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+							//请求人数
+							if(name=='loan_apply'){
+								$("#loan_apply_request_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_request_time").append('提款申请-近'+selectValue);
+								}else{
+									$("#loan_apply_request_time").append('提款申请-近'+selectValue+'分钟');
+								}
+								$("#loan_apply_width_1").empty();
+								$("#loan_apply_width_2").empty();
+								$("#loan_apply_request_Num").empty();
+								$("#loan_apply_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_loan_apply").empty();
+								$("#Contrast_people_loan_apply").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_loan_apply").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_loan_apply").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_loan_apply").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_loan_apply").append(data[i].yesterday_request_person);
+									$("#Contrast_people_loan_apply").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_loan_apply").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_loan_apply").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_apply").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_loan_apply").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_loan_apply").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_apply").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_loan_apply").empty();
+								 $("#QOQ_people_loan_apply").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_loan_apply").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_loan_apply").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_loan_apply").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_loan_apply").append(data[i].late_request_person);
+										$("#QOQ_people_loan_apply").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_loan_apply").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_loan_apply").append(data[i].late_request_person);
+											$("#QOQ_people_loan_apply").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_loan_apply").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_loan_apply").append(data[i].late_request_person);
+											$("#QOQ_people_loan_apply").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='loan_apply'){
+								$("#loan_apply_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_pass_time").append('提款申请-近'+selectValue);
+								}else{
+									$("#loan_apply_pass_time").append('提款申请-近'+selectValue+'分钟');
+								}
+								$("#loan_apply_pass_queryNum").empty();
+								$("#loan_apply_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#loan_apply_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_pass_desc").append('近'+selectValue+'提款申请通过率');
+								}else{
+									$("#loan_apply_pass_desc").append('近'+selectValue+'分钟提款申请通过率');
+								}
+								$("#loan_apply_pass_rate").empty();
+								$("#loan_apply_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_loan_apply_pass_query").empty();
+								$("#Contrast_loan_apply_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_apply_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_apply_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_loan_apply_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_apply_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_loan_apply_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_loan_apply_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_apply_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_apply_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_loan_apply_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_apply_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_apply_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_apply_pass_query").empty();
+								$("#QOQ_loan_apply_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_apply_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_apply_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_loan_apply_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_apply_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_loan_apply_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_loan_apply_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_apply_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_apply_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_apply_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_apply_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_apply_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='loan_apply'){
+								$("#loan_apply_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_reject_time").append('提款申请-近'+selectValue);
+								}else{
+									$("#loan_apply_reject_time").append('提款申请-近'+selectValue+'分钟');
+								}
+								$("#loan_apply_reject_queryNum").empty();
+								$("#loan_apply_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#loan_apply_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_reject_desc").append('近'+selectValue+'提款申请拒绝率');
+								}else{
+									$("#loan_apply_reject_desc").append('近'+selectValue+'分钟提款申请拒绝率');
+								}
+								$("#loan_apply_reject_rate").empty();
+								$("#loan_apply_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_loan_apply_reject_query").empty();
+								$("#Contrast_loan_apply_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_apply_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_apply_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_loan_apply_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_apply_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_loan_apply_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_loan_apply_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_apply_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_apply_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_loan_apply_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_apply_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_apply_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_apply_reject_query").empty();
+								$("#QOQ_loan_apply_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_apply_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_apply_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_loan_apply_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_apply_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_loan_apply_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_loan_apply_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_apply_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_apply_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_apply_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_apply_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_apply_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='loan_apply'){
+								$("#loan_apply_request_data").empty();
+								$("#loan_apply_request_data").append('最近提款申请时间');
+								$("#loan_apply_request_data_show").empty();
+								$("#loan_apply_request_nearTime").empty();
+								$("#loan_apply_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#loan_apply_request_data_show").addClass("font-bold text-danger");
+									$("#loan_apply_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_apply_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_apply_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#loan_apply_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_apply_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='loan_apply'){
+								$("#loan_apply_request_pass_data").empty();
+								$("#loan_apply_request_pass_data").append('最近提款申请通过时间');
+								$("#loan_apply_request_pass_data_show").empty();
+								$("#loan_apply_request_pass_nearTime").empty();
+								$("#loan_apply_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#loan_apply_request_pass_data_show").addClass("font-bold text-danger");
+									$("#loan_apply_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_apply_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_apply_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#loan_apply_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_apply_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+							
+							
+							//请求人数
+							if(name=='loan_face'){
+								$("#loan_fase_request_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_fase_request_time").append('刷脸-近'+selectValue);
+								}else{
+									$("#loan_fase_request_time").append('刷脸-近'+selectValue+'分钟');
+								}
+								$("#loan_fase_width_1").empty();
+								$("#loan_fase_width_2").empty();
+								$("#loan_fase_request_Num").empty();
+								$("#loan_fase_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_loan_fase").empty();
+								$("#Contrast_people_loan_fase").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_loan_fase").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_loan_fase").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_loan_fase").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_loan_fase").append(data[i].yesterday_request_person);
+									$("#Contrast_people_loan_fase").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_loan_fase").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_loan_fase").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_fase").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_loan_fase").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_loan_fase").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_fase").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_loan_fase").empty();
+								 $("#QOQ_people_loan_fase").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_loan_fase").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_loan_fase").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_loan_fase").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_loan_fase").append(data[i].late_request_person);
+										$("#QOQ_people_loan_fase").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_loan_fase").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_loan_fase").append(data[i].late_request_person);
+											$("#QOQ_people_loan_fase").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_loan_fase").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_loan_fase").append(data[i].late_request_person);
+											$("#QOQ_people_loan_fase").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='loan_face'){
+								$("#loan_fase_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_fase_pass_time").append('刷脸-近'+selectValue);
+								}else{
+									$("#loan_fase_pass_time").append('刷脸-近'+selectValue+'分钟');
+								}
+								$("#loan_fase_pass_queryNum").empty();
+								$("#loan_fase_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#loan_fase_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_fase_pass_desc").append('近'+selectValue+'刷脸通过率');
+								}else{
+									$("#loan_fase_pass_desc").append('近'+selectValue+'分钟刷脸通过率');
+								}
+								$("#loan_fase_pass_rate").empty();
+								$("#loan_fase_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_loan_fase_pass_query").empty();
+								$("#Contrast_loan_fase_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_fase_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_fase_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_loan_fase_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_fase_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_loan_fase_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_loan_fase_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_fase_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_fase_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_loan_fase_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_fase_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_fase_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_fase_pass_query").empty();
+								$("#QOQ_loan_fase_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_fase_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_fase_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_loan_fase_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_fase_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_loan_fase_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_loan_fase_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_fase_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_fase_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_fase_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_fase_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_fase_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='loan_face'){
+								$("#loan_fase_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_fase_reject_time").append('刷脸-近'+selectValue);
+								}else{
+									$("#loan_fase_reject_time").append('刷脸-近'+selectValue+'分钟');
+								}
+								$("#loan_fase_reject_queryNum").empty();
+								$("#loan_fase_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#loan_fase_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_fase_reject_desc").append('近'+selectValue+'刷脸拒绝率');
+								}else{
+									$("#loan_fase_reject_desc").append('近'+selectValue+'分钟刷脸拒绝率');
+								}
+								$("#loan_fase_reject_rate").empty();
+								$("#loan_fase_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_loan_fase_reject_query").empty();
+								$("#Contrast_loan_fase_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_fase_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_fase_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_loan_fase_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_fase_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_loan_fase_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_loan_fase_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_fase_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_fase_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_loan_fase_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_fase_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_fase_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}	
+								}
+								$("#QOQ_loan_fase_reject_query").empty();
+								$("#QOQ_loan_fase_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_fase_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_fase_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_loan_fase_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_fase_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_loan_fase_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_loan_fase_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_fase_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_fase_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_fase_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_fase_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_fase_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 	
+								}
+							}
+							if(name=='loan_face'){
+								$("#loan_fase_request_data").empty();
+								$("#loan_fase_request_data").append('最近刷脸时间');
+								$("#loan_fase_request_data_show").empty();
+								$("#loan_fase_request_nearTime").empty();
+								$("#loan_fase_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#loan_fase_request_data_show").addClass("font-bold text-danger");
+									$("#loan_fase_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_fase_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_fase_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#loan_fase_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_fase_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='loan_face'){
+								$("#loan_fase_request_pass_data").empty();
+								$("#loan_fase_request_pass_data").append('最近刷脸通过时间');
+								$("#loan_fase_request_pass_data_show").empty();
+								$("#loan_fase_request_pass_nearTime").empty();
+								$("#loan_fase_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#loan_fase_request_pass_data_show").addClass("font-bold text-danger");
+									$("#loan_fase_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_fase_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_fase_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#loan_fase_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_fase_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+							//请求人数
+							if(name=='anti_fraud_withdraw'){
+								$("#anti_fraud_withdraw_request_time").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_withdraw_request_time").append('反欺诈提款-近'+selectValue);
+								}else{
+									$("#anti_fraud_withdraw_request_time").append('反欺诈提款-近'+selectValue+'分钟');
+								}
+								$("#anti_fraud_withdraw_width_1").empty();
+								$("#anti_fraud_withdraw_width_2").empty();
+								$("#anti_fraud_withdraw_request_Num").empty();
+								$("#anti_fraud_withdraw_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_anti_fraud_withdraw").empty();
+								$("#Contrast_people_anti_fraud_withdraw").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_anti_fraud_withdraw").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_anti_fraud_withdraw").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_anti_fraud_withdraw").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_anti_fraud_withdraw").append(data[i].yesterday_request_person);
+									$("#Contrast_people_anti_fraud_withdraw").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_anti_fraud_withdraw").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_anti_fraud_withdraw").append(data[i].yesterday_request_person);
+										$("#Contrast_people_anti_fraud_withdraw").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_anti_fraud_withdraw").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_anti_fraud_withdraw").append(data[i].yesterday_request_person);
+										$("#Contrast_people_anti_fraud_withdraw").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_anti_fraud_withdraw").empty();
+								 $("#QOQ_people_anti_fraud_withdraw").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_anti_fraud_withdraw").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_anti_fraud_withdraw").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_anti_fraud_withdraw").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_anti_fraud_withdraw").append(data[i].late_request_person);
+										$("#QOQ_people_anti_fraud_withdraw").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_anti_fraud_withdraw").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_anti_fraud_withdraw").append(data[i].late_request_person);
+											$("#QOQ_people_anti_fraud_withdraw").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_anti_fraud_withdraw").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_anti_fraud_withdraw").append(data[i].late_request_person);
+											$("#QOQ_people_anti_fraud_withdraw").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='anti_fraud_withdraw'){
+								$("#anti_fraud_withdraw_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_withdraw_pass_time").append('反欺诈提款-近'+selectValue);
+								}else{
+									$("#anti_fraud_withdraw_pass_time").append('反欺诈提款-近'+selectValue+'分钟');
+								}
+								$("#anti_fraud_withdraw_pass_queryNum").empty();
+								$("#anti_fraud_withdraw_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#anti_fraud_withdraw_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_withdraw_pass_desc").append('近'+selectValue+'反欺诈提款通过率');
+								}else{
+									$("#anti_fraud_withdraw_pass_desc").append('近'+selectValue+'分钟反欺诈提款通过率');
+								}
+								$("#anti_fraud_withdraw_pass_rate").empty();
+								$("#anti_fraud_withdraw_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_anti_fraud_withdraw_pass_query").empty();
+								$("#Contrast_anti_fraud_withdraw_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_anti_fraud_withdraw_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_anti_fraud_withdraw_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_anti_fraud_withdraw_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_anti_fraud_withdraw_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_anti_fraud_withdraw_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_anti_fraud_withdraw_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_anti_fraud_withdraw_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_anti_fraud_withdraw_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_anti_fraud_withdraw_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_anti_fraud_withdraw_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_anti_fraud_withdraw_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_anti_fraud_withdraw_pass_query").empty();
+								$("#QOQ_anti_fraud_withdraw_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_anti_fraud_withdraw_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_anti_fraud_withdraw_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_anti_fraud_withdraw_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_anti_fraud_withdraw_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_anti_fraud_withdraw_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_anti_fraud_withdraw_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_anti_fraud_withdraw_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_anti_fraud_withdraw_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_anti_fraud_withdraw_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_anti_fraud_withdraw_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_anti_fraud_withdraw_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='anti_fraud_withdraw'){
+								$("#anti_fraud_withdraw_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_withdraw_reject_time").append('反欺诈提款-近'+selectValue);
+								}else{
+									$("#anti_fraud_withdraw_reject_time").append('反欺诈提款-近'+selectValue+'分钟');
+								}
+								$("#anti_fraud_withdraw_reject_queryNum").empty();
+								$("#anti_fraud_withdraw_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#anti_fraud_withdraw_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_withdraw_reject_desc").append('近'+selectValue+'反欺诈提款拒绝率');
+								}else{
+									$("#anti_fraud_withdraw_reject_desc").append('近'+selectValue+'分钟反欺诈提款拒绝率');
+								}
+								$("#anti_fraud_withdraw_reject_rate").empty();
+								$("#anti_fraud_withdraw_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_anti_fraud_withdraw_reject_query").empty();
+								$("#Contrast_anti_fraud_withdraw_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_anti_fraud_withdraw_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_anti_fraud_withdraw_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_anti_fraud_withdraw_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_anti_fraud_withdraw_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_anti_fraud_withdraw_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_anti_fraud_withdraw_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_anti_fraud_withdraw_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_anti_fraud_withdraw_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_anti_fraud_withdraw_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_anti_fraud_withdraw_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_anti_fraud_withdraw_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}
+								}
+								$("#QOQ_anti_fraud_withdraw_reject_query").empty();
+								$("#QOQ_anti_fraud_withdraw_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_anti_fraud_withdraw_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_anti_fraud_withdraw_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_anti_fraud_withdraw_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_anti_fraud_withdraw_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_anti_fraud_withdraw_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_anti_fraud_withdraw_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_anti_fraud_withdraw_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_anti_fraud_withdraw_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_anti_fraud_withdraw_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_anti_fraud_withdraw_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_anti_fraud_withdraw_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='anti_fraud_withdraw'){
+								$("#anti_fraud_withdraw_request_data").empty();
+								$("#anti_fraud_withdraw_request_data").append('最近反欺诈提款时间');
+								$("#anti_fraud_withdraw_request_data_show").empty();
+								$("#anti_fraud_withdraw_request_nearTime").empty();
+								$("#anti_fraud_withdraw_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#anti_fraud_withdraw_request_data_show").addClass("font-bold text-danger");
+									$("#anti_fraud_withdraw_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#anti_fraud_withdraw_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#anti_fraud_withdraw_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#anti_fraud_withdraw_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#anti_fraud_withdraw_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='anti_fraud_withdraw'){
+								$("#anti_fraud_withdraw_request_pass_data").empty();
+								$("#anti_fraud_withdraw_request_pass_data").append('最近反欺诈提款通过时间');
+								$("#anti_fraud_withdraw_request_pass_data_show").empty();
+								$("#anti_fraud_withdraw_request_pass_nearTime").empty();
+								$("#anti_fraud_withdraw_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#anti_fraud_withdraw_request_pass_data_show").addClass("font-bold text-danger");
+									$("#anti_fraud_withdraw_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#anti_fraud_withdraw_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#anti_fraud_withdraw_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#anti_fraud_withdraw_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#anti_fraud_withdraw_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							} 
+							//请求人数
+							if(name=='loan_apply_result'){
+								$("#loan_apply_result_request_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_result_request_time").append('提款申请结果-近'+selectValue);
+								}else{
+									$("#loan_apply_result_request_time").append('提款申请结果-近'+selectValue+'分钟');
+								}
+								$("#loan_apply_result_width_1").empty();
+								$("#loan_apply_result_width_2").empty();
+								$("#loan_apply_result_request_Num").empty();
+								$("#loan_apply_result_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_loan_apply_result").empty();
+								$("#Contrast_people_loan_apply_result").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_loan_apply_result").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_loan_apply_result").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_loan_apply_result").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_loan_apply_result").append(data[i].yesterday_request_person);
+									$("#Contrast_people_loan_apply_result").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_loan_apply_result").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_loan_apply_result").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_apply_result").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_loan_apply_result").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_loan_apply_result").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_apply_result").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_loan_apply_result").empty();
+								 $("#QOQ_people_loan_apply_result").removeClass("stat-percent font-bold text-warning");
+							   	 $("#QOQ_people_loan_apply_result").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_loan_apply_result").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_loan_apply_result").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_loan_apply_result").append(data[i].late_request_person);
+										$("#QOQ_people_loan_apply_result").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_loan_apply_result").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_loan_apply_result").append(data[i].late_request_person);
+											$("#QOQ_people_loan_apply_result").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_loan_apply_result").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_loan_apply_result").append(data[i].late_request_person);
+											$("#QOQ_people_loan_apply_result").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='loan_apply_result'){
+								$("#loan_apply_result_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_result_pass_time").append('提款申请结果-近'+selectValue);
+								}else{
+									$("#loan_apply_result_pass_time").append('提款申请结果-近'+selectValue+'分钟');
+								}
+								$("#loan_apply_result_pass_queryNum").empty();
+								$("#loan_apply_result_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#loan_apply_result_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_result_pass_desc").append('近'+selectValue+'提款申请结果通过率');
+								}else{
+									$("#loan_apply_result_pass_desc").append('近'+selectValue+'分钟提款申请结果通过率');
+								}
+								$("#loan_apply_result_pass_rate").empty();
+								$("#loan_apply_result_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_loan_apply_result_pass_query").empty();
+								$("#Contrast_loan_apply_result_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_apply_result_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_apply_result_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_loan_apply_result_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_apply_result_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_loan_apply_result_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_loan_apply_result_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_apply_result_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_apply_result_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_loan_apply_result_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_apply_result_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_apply_result_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_apply_result_pass_query").empty();
+								$("#QOQ_loan_apply_result_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_apply_result_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_apply_result_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_loan_apply_result_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_apply_result_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_loan_apply_result_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_loan_apply_result_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_apply_result_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_apply_result_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_apply_result_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_apply_result_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_apply_result_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='loan_apply_result'){
+								$("#loan_apply_result_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_result_reject_time").append('提款申请结果-近'+selectValue);
+								}else{
+									$("#loan_apply_result_reject_time").append('提款申请结果-近'+selectValue+'分钟');
+								}
+								$("#loan_apply_result_reject_queryNum").empty();
+								$("#loan_apply_result_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#loan_apply_result_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_apply_result_reject_desc").append('近'+selectValue+'提款申请结果拒绝率');
+								}else{
+									$("#loan_apply_result_reject_desc").append('近'+selectValue+'分钟提款申请结果拒绝率');
+								}
+								$("#loan_apply_result_reject_rate").empty();
+								$("#loan_apply_result_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_loan_apply_result_reject_query").empty();
+								$("#Contrast_loan_apply_result_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_apply_result_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_apply_result_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_loan_apply_result_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_apply_result_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_loan_apply_result_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_loan_apply_result_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_apply_result_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_apply_result_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_loan_apply_result_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_apply_result_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_apply_result_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_apply_result_reject_query").empty();
+								$("#QOQ_loan_apply_result_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_apply_result_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_apply_result_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_loan_apply_result_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_apply_result_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_loan_apply_result_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_loan_apply_result_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_apply_result_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_apply_result_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_apply_result_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_apply_result_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_apply_result_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='loan_apply_result'){
+								$("#loan_apply_result_request_data").empty();
+								$("#loan_apply_result_request_data").append('最近提款申请结果时间');
+								$("#loan_apply_result_request_data_show").empty();
+								$("#loan_apply_result_request_nearTime").empty();
+								$("#loan_apply_result_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#loan_apply_result_request_data_show").addClass("font-bold text-danger");
+									$("#loan_apply_result_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_apply_result_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_apply_result_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#loan_apply_result_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_apply_result_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='loan_apply_result'){
+								$("#loan_apply_result_request_pass_data").empty();
+								$("#loan_apply_result_request_pass_data").append('最近提款申请结果通过时间');
+								$("#loan_apply_result_request_pass_data_show").empty();
+								$("#loan_apply_result_request_pass_nearTime").empty();
+								$("#loan_apply_result_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#loan_apply_result_request_pass_data_show").addClass("font-bold text-danger");
+									$("#loan_apply_result_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_apply_result_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_apply_result_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#loan_apply_result_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_apply_result_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+							//请求人数
+							if(name=='anti_fraud_finalCheck'){
+								$("#anti_fraud_finalCheck_request_time").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_finalCheck_request_time").append('反欺诈终审-近'+selectValue);
+								}else{
+									$("#anti_fraud_finalCheck_request_time").append('反欺诈终审-近'+selectValue+'分钟');
+								}
+								$("#anti_fraud_finalCheck_width_1").empty();
+								$("#anti_fraud_finalCheck_width_2").empty();
+								$("#anti_fraud_finalCheck_request_Num").empty();
+								$("#anti_fraud_finalCheck_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_anti_fraud_finalCheck").empty();
+								$("#Contrast_people_anti_fraud_finalCheck").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_anti_fraud_finalCheck").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_anti_fraud_finalCheck").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_anti_fraud_finalCheck").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_anti_fraud_finalCheck").append(data[i].yesterday_request_person);
+									$("#Contrast_people_anti_fraud_finalCheck").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_anti_fraud_finalCheck").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_anti_fraud_finalCheck").append(data[i].yesterday_request_person);
+										$("#Contrast_people_anti_fraud_finalCheck").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_anti_fraud_finalCheck").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_anti_fraud_finalCheck").append(data[i].yesterday_request_person);
+										$("#Contrast_people_anti_fraud_finalCheck").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_anti_fraud_finalCheck").empty();
+								 $("#QOQ_people_anti_fraud_finalCheck").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_anti_fraud_finalCheck").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_anti_fraud_finalCheck").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_anti_fraud_finalCheck").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_anti_fraud_finalCheck").append(data[i].late_request_person);
+										$("#QOQ_people_anti_fraud_finalCheck").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_anti_fraud_finalCheck").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_anti_fraud_finalCheck").append(data[i].late_request_person);
+											$("#QOQ_people_anti_fraud_finalCheck").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_anti_fraud_finalCheck").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_anti_fraud_finalCheck").append(data[i].late_request_person);
+											$("#QOQ_people_anti_fraud_finalCheck").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='anti_fraud_finalCheck'){
+								$("#anti_fraud_finalCheck_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_finalCheck_pass_time").append('反欺诈终审-近'+selectValue);
+								}else{
+									$("#anti_fraud_finalCheck_pass_time").append('反欺诈终审-近'+selectValue+'分钟');
+								}
+								$("#anti_fraud_finalCheck_pass_queryNum").empty();
+								$("#anti_fraud_finalCheck_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#anti_fraud_finalCheck_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_finalCheck_pass_desc").append('近'+selectValue+'反欺诈终审通过率');
+								}else{
+									$("#anti_fraud_finalCheck_pass_desc").append('近'+selectValue+'分钟反欺诈终审通过率');
+								}
+								$("#anti_fraud_finalCheck_pass_rate").empty();
+								$("#anti_fraud_finalCheck_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_anti_fraud_finalCheck_pass_query").empty();
+								$("#Contrast_anti_fraud_finalCheck_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_anti_fraud_finalCheck_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_anti_fraud_finalCheck_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_anti_fraud_finalCheck_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_anti_fraud_finalCheck_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_anti_fraud_finalCheck_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_anti_fraud_finalCheck_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_anti_fraud_finalCheck_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_anti_fraud_finalCheck_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_anti_fraud_finalCheck_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_anti_fraud_finalCheck_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_anti_fraud_finalCheck_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_anti_fraud_finalCheck_pass_query").empty();
+								$("#QOQ_anti_fraud_finalCheck_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_anti_fraud_finalCheck_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_anti_fraud_finalCheck_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_anti_fraud_finalCheck_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_anti_fraud_finalCheck_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_anti_fraud_finalCheck_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_anti_fraud_finalCheck_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_anti_fraud_finalCheck_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_anti_fraud_finalCheck_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_anti_fraud_finalCheck_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_anti_fraud_finalCheck_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_anti_fraud_finalCheck_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='anti_fraud_finalCheck'){
+								$("#anti_fraud_finalCheck_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_finalCheck_reject_time").append('反欺诈终审-近'+selectValue);
+								}else{
+									$("#anti_fraud_finalCheck_reject_time").append('反欺诈终审-近'+selectValue+'分钟');
+								}
+								$("#anti_fraud_finalCheck_reject_queryNum").empty();
+								$("#anti_fraud_finalCheck_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#anti_fraud_finalCheck_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#anti_fraud_finalCheck_reject_desc").append('近'+selectValue+'反欺诈终审拒绝率');
+								}else{
+									$("#anti_fraud_finalCheck_reject_desc").append('近'+selectValue+'分钟反欺诈终审拒绝率');
+								}
+								$("#anti_fraud_finalCheck_reject_rate").empty();
+								$("#anti_fraud_finalCheck_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_anti_fraud_finalCheck_reject_query").empty();
+								$("#Contrast_anti_fraud_finalCheck_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_anti_fraud_finalCheck_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_anti_fraud_finalCheck_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_anti_fraud_finalCheck_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_anti_fraud_finalCheck_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_anti_fraud_finalCheck_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_anti_fraud_finalCheck_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_anti_fraud_finalCheck_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_anti_fraud_finalCheck_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_anti_fraud_finalCheck_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_anti_fraud_finalCheck_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_anti_fraud_finalCheck_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}
+								}
+								$("#QOQ_anti_fraud_finalCheck_reject_query").empty();
+								$("#QOQ_anti_fraud_finalCheck_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_anti_fraud_finalCheck_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_anti_fraud_finalCheck_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_anti_fraud_finalCheck_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_anti_fraud_finalCheck_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_anti_fraud_finalCheck_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_anti_fraud_finalCheck_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_anti_fraud_finalCheck_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_anti_fraud_finalCheck_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_anti_fraud_finalCheck_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_anti_fraud_finalCheck_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_anti_fraud_finalCheck_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='anti_fraud_finalCheck'){
+								$("#anti_fraud_finalCheck_request_data").empty();
+								$("#anti_fraud_finalCheck_request_data").append('最近反欺诈终审时间');
+								$("#anti_fraud_finalCheck_request_data_show").empty();
+								$("#anti_fraud_finalCheck_request_nearTime").empty();
+								$("#anti_fraud_finalCheck_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#anti_fraud_finalCheck_request_data_show").addClass("font-bold text-danger");
+									$("#anti_fraud_finalCheck_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#anti_fraud_finalCheck_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#anti_fraud_finalCheck_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#anti_fraud_finalCheck_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#anti_fraud_finalCheck_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='anti_fraud_finalCheck'){
+								$("#anti_fraud_finalCheck_request_pass_data").empty();
+								$("#anti_fraud_finalCheck_request_pass_data").append('最近反欺诈终审通过时间');
+								$("#anti_fraud_finalCheck_request_pass_data_show").empty();
+								$("#anti_fraud_finalCheck_request_pass_nearTime").empty();
+								$("#anti_fraud_finalCheck_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#anti_fraud_finalCheck_request_pass_data_show").addClass("font-bold text-danger");
+									$("#anti_fraud_finalCheck_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#anti_fraud_finalCheck_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#anti_fraud_finalCheck_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#anti_fraud_finalCheck_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#anti_fraud_finalCheck_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+							//请求人数
+							if(name=='loan_withdraw'){
+								$("#loan_withdraw_request_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_withdraw_request_time").append('提款确认-近'+selectValue);
+								}else{
+									$("#loan_withdraw_request_time").append('提款确认-近'+selectValue+'分钟');
+								}
+								$("#loan_withdraw_width_1").empty();
+								$("#loan_withdraw_width_2").empty();
+								$("#loan_withdraw_request_Num").empty();
+								$("#loan_withdraw_request_Num").append('<span>'+data[i].request_person+'</span>');
+								$("#Contrast_people_loan_withdraw").empty();
+								$("#Contrast_people_loan_withdraw").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_people_loan_withdraw").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_people_loan_withdraw").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_people=='0.00%'||data[i].Contrast_people=='暂无'){
+									$("#Contrast_people_loan_withdraw").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_people_loan_withdraw").append(data[i].yesterday_request_person);
+									$("#Contrast_people_loan_withdraw").append('<span style="float:right">'+data[i].Contrast_people+'</span>');
+								}else{
+									if(data[i].Contrast_people_flag=='up'){
+										$("#Contrast_people_loan_withdraw").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_people_loan_withdraw").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_withdraw").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}else{
+										$("#Contrast_people_loan_withdraw").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_people_loan_withdraw").append(data[i].yesterday_request_person);
+										$("#Contrast_people_loan_withdraw").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_people+'</span>');
+									}
+								}
+								 $("#QOQ_people_loan_withdraw").empty();
+								 $("#QOQ_people_loan_withdraw").removeClass("stat-percent font-bold text-warning");
+								 $("#QOQ_people_loan_withdraw").removeClass("stat-percent font-bold text-navy");
+								 $("#QOQ_people_loan_withdraw").removeClass("stat-percent font-bold text-danger");
+								 if(data[i].QOQ_request_person=='0.00%'||data[i].QOQ_request_person=='暂无'){
+										$("#QOQ_people_loan_withdraw").addClass("stat-percent font-bold text-warning");
+										$("#QOQ_people_loan_withdraw").append(data[i].late_request_person);
+										$("#QOQ_people_loan_withdraw").append('<span style="float:right">'+data[i].QOQ_request_person+'</span>');
+									}else{
+										if(data[i].QOQ_request_person_flag=='up'){
+											$("#QOQ_people_loan_withdraw").addClass("stat-percent font-bold text-navy");
+											$("#QOQ_people_loan_withdraw").append(data[i].late_request_person);
+											$("#QOQ_people_loan_withdraw").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										}else{
+											$("#QOQ_people_loan_withdraw").addClass("stat-percent font-bold text-danger");
+											$("#QOQ_people_loan_withdraw").append(data[i].late_request_person);
+											$("#QOQ_people_loan_withdraw").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_request_person+'</span>');
+										} 
+									}
+							}
+							//请求通过人数
+							if(name=='loan_withdraw'){
+								$("#loan_withdraw_pass_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_withdraw_pass_time").append('提款确认-近'+selectValue);
+								}else{
+									$("#loan_withdraw_pass_time").append('提款确认-近'+selectValue+'分钟');
+								}
+								$("#loan_withdraw_pass_queryNum").empty();
+								$("#loan_withdraw_pass_queryNum").append('<span>'+data[i].pass_person+'</span>');
+								$("#loan_withdraw_pass_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_withdraw_pass_desc").append('近'+selectValue+'提款确认通过率');
+								}else{
+									$("#loan_withdraw_pass_desc").append('近'+selectValue+'分钟提款确认通过率');
+								}
+								$("#loan_withdraw_pass_rate").empty();
+								$("#loan_withdraw_pass_rate").append(data[i].anti_fraud_loan_pass_rate);
+								$("#Contrast_loan_withdraw_pass_query").empty();
+								$("#Contrast_loan_withdraw_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_withdraw_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_withdraw_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_pass_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_pass_rate=='暂无'){
+									$("#Contrast_loan_withdraw_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_withdraw_pass_query").append(data[i].yesterday_pass_person);
+									$("#Contrast_loan_withdraw_pass_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+								}else{
+									if(data[i].Contrast_pass_rate_flag=='up'){
+										$("#Contrast_loan_withdraw_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_withdraw_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_withdraw_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}else{
+										$("#Contrast_loan_withdraw_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_withdraw_pass_query").append(data[i].yesterday_pass_person);
+										$("#Contrast_loan_withdraw_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_pass_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_withdraw_pass_query").empty();
+								$("#QOQ_loan_withdraw_pass_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_withdraw_pass_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_withdraw_pass_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_pass_person_rate=='0.00%'||data[i].QOQ_pass_person_rate=='暂无'){
+									$("#QOQ_loan_withdraw_pass_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_withdraw_pass_query").append(data[i].late_pass_person);
+									$("#QOQ_loan_withdraw_pass_query").append('<span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_pass_person_flag=='up'){
+										$("#QOQ_loan_withdraw_pass_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_withdraw_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_withdraw_pass_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_withdraw_pass_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_withdraw_pass_query").append(data[i].late_pass_person);
+										$("#QOQ_loan_withdraw_pass_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_pass_person_rate+'</span>');
+									} 
+								}
+							}
+							//请求拒绝人数
+							if(name=='loan_withdraw'){
+								$("#loan_withdraw_reject_time").empty();
+								if(selectValue=='一天'){
+									$("#loan_withdraw_reject_time").append('提款确认-近'+selectValue);
+								}else{
+									$("#loan_withdraw_reject_time").append('提款确认-近'+selectValue+'分钟');
+								}
+								$("#loan_withdraw_reject_queryNum").empty();
+								$("#loan_withdraw_reject_queryNum").append('<span>'+data[i].reject_person+'</span>');
+								$("#loan_withdraw_reject_desc").empty();
+								if(selectValue=='一天'){
+									$("#loan_withdraw_reject_desc").append('近'+selectValue+'提款确认拒绝率');
+								}else{
+									$("#loan_withdraw_reject_desc").append('近'+selectValue+'分钟提款确认拒绝率');
+								}
+								$("#loan_withdraw_reject_rate").empty();
+								$("#loan_withdraw_reject_rate").append(data[i].anti_fraud_loan_reject_rate);
+								$("#Contrast_loan_withdraw_reject_query").empty();
+								$("#Contrast_loan_withdraw_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#Contrast_loan_withdraw_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#Contrast_loan_withdraw_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].Contrast_anti_fraud_loan_reject_rate=='0.00%'||data[i].Contrast_anti_fraud_loan_reject_rate=='暂无'){
+									$("#Contrast_loan_withdraw_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#Contrast_loan_withdraw_reject_query").append(data[i].yesterday_reject_person);
+									$("#Contrast_loan_withdraw_reject_query").append('<span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+								}else{
+									if(data[i].Contrast_reject_rate_flag=='up'){
+										$("#Contrast_loan_withdraw_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#Contrast_loan_withdraw_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_withdraw_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}else{
+										$("#Contrast_loan_withdraw_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#Contrast_loan_withdraw_reject_query").append(data[i].yesterday_reject_person);
+										$("#Contrast_loan_withdraw_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].Contrast_anti_fraud_loan_reject_rate+'</span>');
+									}
+								}
+								$("#QOQ_loan_withdraw_reject_query").empty();
+								$("#QOQ_loan_withdraw_reject_query").removeClass("stat-percent font-bold text-warning");
+								$("#QOQ_loan_withdraw_reject_query").removeClass("stat-percent font-bold text-navy");
+								$("#QOQ_loan_withdraw_reject_query").removeClass("stat-percent font-bold text-danger");
+								if(data[i].QOQ_reject_person_rate=='0.00%'||data[i].QOQ_reject_person_rate=='暂无'){
+									$("#QOQ_loan_withdraw_reject_query").addClass("stat-percent font-bold text-warning");
+									$("#QOQ_loan_withdraw_reject_query").append(data[i].late_reject_person);
+									$("#QOQ_loan_withdraw_reject_query").append('<span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+								}else{
+									if(data[i].QOQ_reject_person_flag=='up'){
+										$("#QOQ_loan_withdraw_reject_query").addClass("stat-percent font-bold text-navy");
+										$("#QOQ_loan_withdraw_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_withdraw_reject_query").append('<i class="fa fa-level-up" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									}else{
+										$("#QOQ_loan_withdraw_reject_query").addClass("stat-percent font-bold text-danger");
+										$("#QOQ_loan_withdraw_reject_query").append(data[i].late_reject_person);
+										$("#QOQ_loan_withdraw_reject_query").append('<i class="fa fa-level-down" style="float:right"></i><span style="float:right">'+data[i].QOQ_reject_person_rate+'</span>');
+									} 
+								}
+							}
+							if(name=='loan_withdraw'){
+								$("#loan_withdraw_request_data").empty();
+								$("#loan_withdraw_request_data").append('最近提款确认时间');
+								$("#loan_withdraw_request_data_show").empty();
+								$("#loan_withdraw_request_nearTime").empty();
+								$("#loan_withdraw_request_with").empty();
+								if(data[i].request_time=='暂无'){
+									$("#loan_withdraw_request_data_show").addClass("font-bold text-danger");
+									$("#loan_withdraw_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_withdraw_request_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_withdraw_request_data_show").append('<h1 style="font-weight:700;">'+data[i].request_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_time2+'</h1>');
+									$("#loan_withdraw_request_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_withdraw_request_nearTime").append('<span>'+data[i].nearRequest_Time+'</span>');
+							}
+							if(name=='loan_withdraw'){
+								$("#loan_withdraw_request_pass_data").empty();
+								$("#loan_withdraw_request_pass_data").append('最近提款确认通过时间');
+								$("#loan_withdraw_request_pass_data_show").empty();
+								$("#loan_withdraw_request_pass_nearTime").empty();
+								$("#loan_withdraw_request_pass_with").empty();
+								if(data[i].request_pass_time=='暂无'){
+									$("#loan_withdraw_request_pass_data_show").addClass("font-bold text-danger");
+									$("#loan_withdraw_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time+'</h1><h1 style="font-weight:700;">&nbsp;</h1>');
+									$("#loan_withdraw_request_pass_nearTime").addClass("stat-percent font-bold text-danger");
+								}else{
+									$("#loan_withdraw_request_pass_data_show").append('<h1 style="font-weight:700;">'+data[i].request_pass_time1+'</h1><h1 style="font-weight:700;">'+data[i].request_pass_time2+'</h1>');
+									$("#loan_withdraw_request_pass_nearTime").addClass("stat-percent font-bold text-navy");
+								}
+								$("#loan_withdraw_request_pass_nearTime").append('<span>'+data[i].nearPass_Time+'</span>');
+							}
+						}
+					}
+				});
+			};
+			$(function() {
+				$("#selectValue").change(function(){
+					omg();
+			});
+			});
+		</script>
+</body>
+</html>

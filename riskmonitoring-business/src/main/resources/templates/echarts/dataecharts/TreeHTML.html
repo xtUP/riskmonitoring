@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<th:block th:include="include :: header('授信节点树图')" />
+<style type="text/css">
+canvas {
+	width: 1920px;
+	height: 937px;
+}
+
+#treeChart: {
+	overflow: visible;
+	width: 1920px;
+	height: 880px;
+}
+
+element.style {
+	width: 1920px;
+	height: 937px;
+}
+
+.echarts {
+	width: 1920px;
+	height: 880px;
+}
+</style>
+</head>
+<body class="" style="height: 100%; margin: 0">
+	<div class="form-group">
+		<label class="font-noraml" style="font-size: 18px;">授信环节日期选择</label>
+		<div class="input-group date">
+		<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			<input type="text" name="" value="" class="input-sm form-control"
+				id="datetimepicker" placeholder="yyyy-MM-dd" />
+		</div>
+	</div>
+	<div class="echarts" id="treeChart"></div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: echarts-js" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<script type="text/javascript">
+		$(function(){
+			<!-- datetimepicker示例 -->
+			$("#datetimepicker").datetimepicker({
+				    format: "yyyy-mm-dd",
+				    minView: "month",
+				    autoclose: true
+				});
+		});
+		var prefix = ctx + "echarts/Credit_tree";
+		$(function() {
+			var myDate = new Date;
+		    var year = myDate.getFullYear(); //获取当前年
+		    var mon = myDate.getMonth() + 1; //获取当前月
+		    var date = myDate.getDate(); //获取当前日
+			$("#datetimepicker").val(year+"-"+mon+"-"+date);
+			omg();
+		});
+		function omg(){
+			var selectValue = document.getElementById("datetimepicker").value;
+			var treeChart = echarts.init(document
+					.getElementById("treeChart"));
+			var tree_option = {
+					
+			}
+			$.ajax({
+				cache : false,
+				type : "POST",
+				url : prefix + "/treeData"+"?selectValue="+selectValue,
+				data : {},
+				dataType : 'json',
+				async : false,
+				error : function(request) {
+					/* $.modal.alertError("系统错误"); */
+				},
+				success : function(data) {
+					treeChart.setOption(tree_option);
+					treeChart.setOption({ 
+						series: [
+						            {
+						                type: 'tree',
+						                data: [data],
+						                top: '1%',
+						                left: '7%',
+						                bottom: '1%',
+						                right: '20%',
+						                expandAndCollapse: true,
+						                initialTreeDepth: -1,
+						                symbolSize: 10,
+						                label: {
+						                    show:true,
+						                    position: ['-150%', '250%'],
+						                    verticalAlign: 'middle',
+						                    align: 'left',
+						                    fontSize: 10
+						                },
+						                lineStyle: {
+						                                width: 6
+						                            },
+						                leaves: {
+						                    label: {
+						                    	position: ['-150%', '250%'],
+						                        verticalAlign: 'middle',
+						                        align: 'left'
+						                    }
+						                },
+
+						                expandAndCollapse: true,
+						                animationDuration: 550,
+						                animationDurationUpdate: 750
+						            }
+						        ]
+					});
+					$(window).resize(treeChart.resize);
+					}
+				//ajax括号
+				})
+		//函数括号		
+		};
+		$(function() {
+				$("#datetimepicker").change(function(){
+					omg();
+			});
+			});
+</script>
+</body>
+</html>

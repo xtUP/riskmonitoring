@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.riskmonitoring</groupId>
+	<artifactId>riskmonitoring</artifactId>
+	<version>4.1.0</version>
+
+	<name>riskmonitoring</name>
+	<url>http://www.ruoyi.vip</url>
+	<description>监控管理系统</description>
+
+	<properties>
+		<riskmonitoring.version>4.1.0</riskmonitoring.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<shiro.version>1.4.1</shiro.version>
+		<thymeleaf.extras.shiro.version>2.0.0</thymeleaf.extras.shiro.version>
+		<mybatis.boot.version>1.3.2</mybatis.boot.version>
+		<druid.version>1.1.14</druid.version>
+		<bitwalker.version>1.19</bitwalker.version>
+		<kaptcha.version>2.3.2</kaptcha.version>
+		<swagger.version>2.9.2</swagger.version>
+		<pagehelper.boot.version>1.2.5</pagehelper.boot.version>
+		<fastjson.version>1.2.60</fastjson.version>
+		<oshi.version>3.9.1</oshi.version>
+		<commons.io.version>2.5</commons.io.version>
+		<commons.fileupload.version>1.3.3</commons.fileupload.version>
+		<poi.version>3.17</poi.version>
+		<velocity.version>1.7</velocity.version>
+		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+		<profiles.dir>src/main/profiles</profiles.dir>
+	</properties>
+
+	<!-- 依赖声明 -->
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- SpringBoot的依赖配置 -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>2.1.1.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!--阿里数据库连接池 -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid-spring-boot-starter</artifactId>
+				<version>${druid.version}</version>
+			</dependency>
+
+			<!--验证码 -->
+			<dependency>
+				<groupId>com.github.penggle</groupId>
+				<artifactId>kaptcha</artifactId>
+				<version>${kaptcha.version}</version>
+			</dependency>
+
+			<!--Shiro核心框架 -->
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+
+			<!-- Shiro使用Srping框架 -->
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-spring</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+
+			<!-- Shiro使用EhCache缓存框架 -->
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-ehcache</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+
+			<!-- thymeleaf模板引擎和shiro框架的整合 -->
+			<dependency>
+				<groupId>com.github.theborakompanioni</groupId>
+				<artifactId>thymeleaf-extras-shiro</artifactId>
+				<version>${thymeleaf.extras.shiro.version}</version>
+			</dependency>
+
+			<!-- 解析客户端操作系统、浏览器等 -->
+			<dependency>
+				<groupId>eu.bitwalker</groupId>
+				<artifactId>UserAgentUtils</artifactId>
+				<version>${bitwalker.version}</version>
+			</dependency>
+
+			<!-- pagehelper 分页插件 -->
+			<dependency>
+				<groupId>com.github.pagehelper</groupId>
+				<artifactId>pagehelper-spring-boot-starter</artifactId>
+				<version>${pagehelper.boot.version}</version>
+			</dependency>
+
+			<!-- 获取系统信息 -->
+			<dependency>
+				<groupId>com.github.oshi</groupId>
+				<artifactId>oshi-core</artifactId>
+				<version>${oshi.version}</version>
+			</dependency>
+
+			<!-- swagger2 -->
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${swagger.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>io.swagger</groupId>
+						<artifactId>swagger-annotations</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.swagger</groupId>
+						<artifactId>swagger-models</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- swagger2-UI -->
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+
+			<!--io常用工具类 -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons.io.version}</version>
+			</dependency>
+
+			<!--文件上传工具类 -->
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons.fileupload.version}</version>
+			</dependency>
+
+			<!-- excel工具 -->
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+
+			<!--velocity代码生成使用模板 -->
+			<dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity</artifactId>
+				<version>${velocity.version}</version>
+			</dependency>
+
+			<!-- 阿里JSON解析器 -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
+
+			<!-- 定时任务 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-quartz</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+
+			<!-- 代码生成 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-generator</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+
+			<!-- 核心模块 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-framework</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+
+			<!-- 系统模块 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-system</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+			<!-- 监控模块 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-monitor</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+			<!-- 通用工具 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-common</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+			<!-- 业务模块 -->
+			<dependency>
+				<groupId>com.riskmonitoring</groupId>
+				<artifactId>riskmonitoring-business</artifactId>
+				<version>${riskmonitoring.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<modules>
+		<module>riskmonitoring-admin</module>
+		<module>riskmonitoring-framework</module>
+		<module>riskmonitoring-system</module>
+		<module>riskmonitoring-quartz</module>
+		<module>riskmonitoring-generator</module>
+		<module>riskmonitoring-common</module>
+		<module>riskmonitoring-business</module>
+		<module>riskmonitoring-monitor</module>
+	</modules>
+	<packaging>pom</packaging>
+
+
+	<dependencies>
+
+	</dependencies>
+
+	<build>
+		<resources>
+			<!-- 
+			排除模块中的mapper和templates文件，这些文件最终要打包在一起统一管理
+			maven编译统一配置,如果子工程需要特定的配置，在子工程中配置resource,注意:如果子工程配置了<resource>，那么是配置了一个，继承父工程的 
+				<resource>都会失效。 maven默认打包的时候 Java包下的配置文件不打入jar中，需要配置才可以 注意：如果配置了<resource>了，资源目录下的配置文件就按照配置的来打包， 
+				如果只配置<directory>src/main/java</directory>没有配置 <directory>src/main/resources</directory>那么resources下的配置文件 
+				不会导入到jar中的。 -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>mapper/**/*Mapper.xml</exclude>
+					<exclude>templates/**</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>public</id>
+			<name>aliyun nexus</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>public</id>
+			<name>aliyun nexus</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	<distributionManagement>
+		<!-- <snapshotRepository> <id>ossrh</id> <url>https://oss.sonatype.org/content/repositories/snapshots</url> 
+			</snapshotRepository> <repository> <id>ossrh</id> <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url> 
+			</repository> -->
+		<!-- 配置distributionManagement的作用是将包传到私服上 mvn install 会将项目生成的构件安装到本地Maven仓库， 
+			mvn deploy 用来将项目生成的构件分发到远程Maven仓库。 本地Maven仓库的构件只能供当前用户使用，在分发到远程Maven仓库之后，所有能访问该仓库的用户都能使用你的构件。 
+			我们需要配置POM的distributionManagement来指定Maven分发构件的位置 <id>releases</id> nexus服务器中用户名：在settings.xml中<server>的id 
+			( <server> <id>releases</id> <username>admin</username> <password>2236F#K#</password> 
+			</server> ) <name>Releases</name> 自定义名称 <url>http://172.30.1.44:8081/nexus/content/repositories/releases/</url> 
+			远程maven仓库url 私服的url 这个配置不对的话deploy是不行的。 -->
+		<repository>
+			<id>releases</id><!-- nexus中配置用户的server标签的id -->
+			<name>Releases</name><!-- 自定义的名称 -->
+			<url>http://172.30.1.44:8081/nexus/content/repositories/releases/</url><!-- 
+				nexus地址 -->
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Snapshots</name>
+			<url>http://172.30.1.44:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+
+	</distributionManagement>
+
+</project>

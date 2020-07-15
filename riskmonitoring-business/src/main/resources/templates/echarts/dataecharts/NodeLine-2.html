@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<th:block th:include="include :: header('指标近一小时动态图')" />
+<!-- <meta http-equiv="refresh" content="10"> -->
+</head>
+<style>
+table{ 
+text-align:center;
+}
+.echarts {
+    height: 180px;
+}
+.ibox-content {
+    padding: 10px 10px 10px 10px;
+}
+.ibox-title {
+	padding: 7px 7px 7px 7px;
+}
+h2 {
+	font-weight:800;
+	color:#3D3C3C;
+	font-size:18px;
+	margin:0px;
+	margin-top: 0px;
+}
+.wrapper-content {
+	padding: 10px 10px;
+}
+.ibox{
+	margin-bottom: 10px;
+}
+.dashboard-header {
+	padding: 5px 20px;
+}
+</style>
+<body class="gray-bg">
+	<div class="row  border-bottom white-bg dashboard-header" id="title_float">
+				<div class="col-sm-12" style="text-align:center;font-size:18px;">
+					<!-- <select id="selectValue" style="display:block;width:120px;height:30px;float:left;" class="combobox">
+						<option value="10" selected>近10分钟</option>
+						<option value="30">近30分钟</option>
+						<option value="60">近60分钟</option>
+						<option value="一天">近一天</option>
+					</select> -->
+					<span id="current_time" style="display:block;text-align:center;"></span>
+				</div>
+	</div> 
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                    	<h2>授信申请结果</h2>
+                        <div class="echarts" id="echarts-credit_apply_result-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>提款申请</h2>
+                        <div class="echarts" id="echarts-loan_apply-chart"></div>
+                    </div>
+                </div>
+            </div>
+             <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>刷脸</h2>
+                        <div class="echarts" id="echarts-loan_face-chart"></div>
+                    </div>
+                </div>
+            </div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>反欺诈提款</h2>
+                        <div class="echarts" id="echarts-anti_fraud_withdraw-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>提款申请结果</h2>
+                        <div class="echarts" id="echarts-loan_apply_result-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>反欺诈终审</h2>
+                        <div class="echarts" id="echarts-anti_fraud_finalCheck-chart"></div>
+                    </div>
+                </div>
+            </div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>提款确认</h2>
+                        <div class="echarts" id="echarts-loan_withdraw-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>借据放款结果</h2>
+                        <div class="echarts" id="echarts-release_result-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+	                	<h2>&nbsp;</h2>
+                        <div class="echarts" id="xxx"></div>
+                    </div>
+                </div>
+            </div>
+		</div>
+		<!--结尾 -->
+		<input type="hidden" id="initSv" th:value="${selectValue}"/>
+		<input type="hidden" id="initTv" th:value="${selectTime}"/>
+		</div>			
+		<th:block th:include="include :: footer" />
+		<th:block th:include="include :: echarts-js" />
+		<th:block th:include="include :: sparkline-js" />
+		<script type="text/javascript">
+			var prefix = ctx + "echarts/node_line1_echarts";
+			var selectV=$("#initTv").val();
+			if(selectV==''||selectV==null){
+				selectV=60000;
+			}
+			var isLoaded = false;
+			function reqs() {
+				//第一个
+						var registChart = echarts.init(document.getElementById("echarts-credit_apply_result-chart"));
+				        var registOption = {
+				        		tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+							        data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+								grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第二个
+						var auth_bindChart = echarts.init(document.getElementById("echarts-loan_apply-chart"));
+				        var auth_bindOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#8B8B00','#2F4554'],
+							    legend: {
+							    	right: '0%',
+							        data: ['昨天请求人数','今天请求人数']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: {
+				        	        type: 'value'
+				        	    },
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第三个
+						var credit_applyChart = echarts.init(document.getElementById("echarts-loan_face-chart"));
+				        var credit_applyOption = {
+				        		tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+									data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第四个
+						var anti_fraud_loanChart = echarts.init(document.getElementById("echarts-anti_fraud_withdraw-chart"));
+				        var anti_fraud_loanOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+									data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第五个
+						var credit_report_query_czbcChart = echarts.init(document.getElementById("echarts-loan_apply_result-chart"));
+				        var credit_report_query_czbcOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+									data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第六个
+						var credit_report_query_zhxtChart = echarts.init(document.getElementById("echarts-anti_fraud_finalCheck-chart"));
+				        var credit_report_query_zhxtOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+									data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				        //第七个
+						var credit_report_result_czbcChart = echarts.init(document.getElementById("echarts-loan_withdraw-chart"));
+				        var credit_report_result_czbcOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#8B8B00','#2F4554'],
+								legend: {
+									right: '0%',
+									data: ['昨天请求人数','今天请求人数']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第八个
+						var credit_report_result_zhxtChart = echarts.init(document.getElementById("echarts-release_result-chart"));
+				        var credit_report_result_zhxtOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+									data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				      //第九个
+						var anti_fraud_custPretrialChart = echarts.init(document.getElementById("xxx"));
+				        var anti_fraud_custPretrialOption = {
+								tooltip : {
+									trigger : 'axis'
+								},
+								color:['#2F4554','#64A2A9','#C33935','#88AC84'],
+								legend: {
+									right: '0%',
+									data: ['请求人数','通过人数','拒绝人数','通过率']
+							    },
+							    grid: {
+									x: '8%', 
+									x2:'9%',
+									y :'15%',
+									y2:'12%'
+                                },
+				        		xAxis: {
+				        	        type: 'category',
+				        	        data: []
+				        	    },
+				        	    yAxis: [{
+				        	        type: 'value'
+				        	    },{
+				        	        type: 'value',
+				        	        axisLabel:{
+				        	        	formatter:'{value}%'
+				        	        }
+				        	    }],
+				        	    series: [{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	type: 'line'
+				        	    },{
+				        	    	data: [],
+				        	    	lineStyle:{
+				        	    		normal:{
+				        	    			width:3
+				        	    		}
+				        	    	},
+				        	    	type: 'line'
+				        	    }]
+				        };
+				        $.ajax({
+							cache : false,
+							type : "POST",
+							url : prefix + "/node_line_charts",
+							data : {},
+							dataType : 'json',
+							async : false,
+							error : function(request) {
+								/* $.modal.alertError("系统错误"); */
+							},
+							success : function(data) {
+								//console.log(data);
+								for (var i = 0; i < data.length; i++) {
+								var lenged=[];
+								var reqDate=[];
+								var ztReqDate=[];
+								var rejectDate=[];
+								var acceptDate=[];
+								var passRate=[];
+								//第一个
+								if(data[i].monitor_node_event=="credit_apply_result"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+							        registChart.setOption(registOption);
+							        registChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+							        	series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate  
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(registChart.resize);
+								}
+								//第二个
+								if(data[i].monitor_node_event=="loan_apply"){
+									for(var x=6;x>0;x--){
+										var Timename='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var ZtReqName='zt_request_person_'+x+'0m';
+										lenged.push(data[i][Timename]);
+										reqDate.push(data[i][reqName]);
+										ztReqDate.push(data[i][ZtReqName]);
+									}
+									auth_bindChart.setOption(auth_bindOption);
+									auth_bindChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '昨天请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#8B8B00'  
+				                                    }  
+				                                }  
+				                            },
+											data : ztReqDate
+										},{
+											name : '今天请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										}]
+									});
+									$(window).resize(auth_bindChart.resize);
+								}
+								//第三个
+								if(data[i].monitor_node_event=="loan_face"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+									credit_applyChart.setOption(credit_applyOption);
+									credit_applyChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+							        	series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate  
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(credit_applyChart.resize);
+								}
+								//第四个
+								if(data[i].monitor_node_event=="anti_fraud_withdraw"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+							        anti_fraud_loanChart.setOption(anti_fraud_loanOption);
+							        anti_fraud_loanChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(anti_fraud_loanChart.resize);
+								}
+								//第五个
+								if(data[i].monitor_node_event=="loan_apply_result"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+									credit_report_query_czbcChart.setOption(credit_report_query_czbcOption);
+									credit_report_query_czbcChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate  
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(credit_report_query_czbcChart.resize);
+								}
+								//第六个
+								if(data[i].monitor_node_event=="anti_fraud_finalCheck"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+									credit_report_query_zhxtChart.setOption(credit_report_query_zhxtOption);
+									credit_report_query_zhxtChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate  
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(credit_report_query_zhxtChart.resize);
+								}
+								//第七个
+								if(data[i].monitor_node_event=="loan_withdraw"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var ZtReqName='zt_request_person_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										ztReqDate.push(data[i][ZtReqName]);
+									}
+									credit_report_result_czbcChart.setOption(credit_report_result_czbcOption);
+									credit_report_result_czbcChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '昨天请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#8B8B00'  
+				                                    }  
+				                                }  
+				                            },
+											data : ztReqDate
+										},{
+											name : '今天请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										}]
+									});
+									$(window).resize(credit_report_result_czbcChart.resize);
+								}
+								//第八个
+								if(data[i].monitor_node_event=="release_result"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+									credit_report_result_zhxtChart.setOption(credit_report_result_zhxtOption);
+									credit_report_result_zhxtChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate  
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(credit_report_result_zhxtChart.resize);
+								}
+								//第九个
+								if(data[i].monitor_node_event=="xxx"){
+									for(var x=6;x>0;x--){
+										var timeName='Time'+x+'0m';
+										var reqName='request_person_'+x+'0m';
+										var acceptName='pass_person_'+x+'0m';
+										var rejectName='reject_person_'+x+'0m';
+										var passRateName='pass_rate_'+x+'0m';
+										lenged.push(data[i][timeName]);
+										reqDate.push(data[i][reqName]);
+										acceptDate.push(data[i][acceptName]);
+										rejectDate.push(data[i][rejectName]);
+										passRate.push(data[i][passRateName]);
+									}
+									anti_fraud_custPretrialChart.setOption(anti_fraud_custPretrialOption);
+									anti_fraud_custPretrialChart.setOption({
+							        	xAxis  : [{
+							        		data : lenged
+							        	}],
+										series : [{
+											name : '请求人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#2F4554'  
+				                                    }  
+				                                }  
+				                            },
+											data : reqDate
+										},{
+											name : '通过人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#64A2A9'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : acceptDate
+										},{
+											name : '拒绝人数',
+											yAxisIndex : '0',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#C33935'  
+				                                    }  
+				                                }  
+				                            }, 
+											data : rejectDate  
+										},{
+											name : '通过率',
+											yAxisIndex : '1',
+											itemStyle : {  
+				                                normal : {  
+				                                    lineStyle:{  
+				                                        color:'#88AC84',
+				                                        type:'dashed'    
+				                                    }  
+				                                }  
+				                            }, 
+											data : passRate  
+										}]
+									});
+									$(window).resize(anti_fraud_custPretrialChart.resize);
+								}
+								//for循环
+								}
+							//success
+							} ,
+					        complete: function() {
+					            isLoaded = true;
+					        }
+						//ajax
+				        });
+				 //时间
+				 //当前时间
+				var myDate = new Date;
+			    var year = myDate.getFullYear(); //获取当前年
+			    var mon = myDate.getMonth() + 1; //获取当前月
+			    var date = myDate.getDate(); //获取当前日
+			    var h = myDate.getHours();//获取当前小时数(0-23)
+			    var m = myDate.getMinutes();//获取当前分钟数(0-59)
+			    var s = myDate.getSeconds();//获取当前秒
+			    $("#current_time").html("近一小时数据展示"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+"数据截止时间："+year+"年"+mon+"月"+date+"日"+h+"时"+m+"分"+s+"秒");
+			    //时间间隔
+			//function
+			 };
+			 reqs();
+			 setInterval(function() {
+				 if(isLoaded) reqs();
+				},selectV);
+				
+		</script>
+</body>
+</html>
